@@ -3,16 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Information</title>
+    <title>Weather</title>
     <style>
         #weather { font-size: 1.5em; 
                 margin-top: 20px; 
                 color: #26292c;
+                width: 300px;
+                text-align: justify;
+                margin-left: 60px;
+        }
+        #weather img{
+            width: 160px;
+            height: 160px;
+            border-style: solid;
+            border-color: #00aaff;
+            border-width: 1px;
+            border-radius: 10px;
+            background-color: white;
+            margin-left: 60px;
+            margin-top: 10px;
+
         }
         input, button { 
             padding: 8px; 
             font-size: 1em; 
             margin: 5px; 
+            border-radius: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            width: 210px;
+        }
+        button {
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 230px;
+        }
+        .button1{
+            background: none;
+            border-color: #00aaff;
+            color: #00aaff;
+        }
+        .button2{
+            background-color: #00aaff; 
+            color: white;
+            border: none;
         }
         .container {
             max-width: 400px;
@@ -42,8 +79,8 @@
         <h1>Weather</h1>
         <img src="weather.png" alt="Weather Icon" class="main-icon">
         <input type="text" id="cityInput" placeholder="Enter city name"> <br>
-        <button onclick="getWeatherByCity()">Хотоо сонгох</button> 
-        <button onclick="getWeatherByLocation()">Байршилаар цаг агаар харуулах</button>
+        <button onclick="getWeatherByCity()" class="button1">Хотоо сонгох</button> 
+        <button onclick="getWeatherByLocation()" class="button2">Байршилаар харуулах</button>
         <div id="weather"></div>
     </div>
 
@@ -99,7 +136,9 @@
             document.getElementById('weather').innerHTML = `
                 <p>City: ${data.name}</p>
                 <p>Temperature: ${data.main.temp}°C</p>
-                <p>Weather: ${data.weather[0].description}</p>`;
+                <p>Weather: ${data.weather[0].description}</p>
+                <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Weather Icon">
+                `
         }
     </script>
 </body>
