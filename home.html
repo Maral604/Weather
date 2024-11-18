@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+    <style>
+        #weather { font-size: 1.5em; 
+                margin-top: 20px; 
+                color: #26292c;
+                width: 75%;
+                text-align: justify;
+                margin-left: 20%;
+                align-items: center;
+                justify-content: center;
+        }
+        #weather img{
+            width: 50%;
+            height: 50%;
+            border-style: solid;
+            border-color: #00aaff;
+            border-width: 1px;
+            border-radius: 10px;
+            background-color: white;
+            margin-top: 10px;
+            align-items: center;
+            display: flex;
+            margin-left: 10%;
+
+        }
+        input, button { 
+            padding: 8px; 
+            font-size: 1em; 
+            margin: 5px; 
+            border-radius: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+            width: 210px;
+        }
+        button {
+            padding: 10px 20px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            width: 230px;
+        }
+        .button1{
+            background: none;
+            border-color: #00aaff;
+            color: #00aaff;
+        }
+        .button2{
+            background-color: #00aaff; 
+            color: white;
+            border: none;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #26292c;
+            box-shadow: 0 0 20px rgba(198, 197, 197, 0.5);
+            background: linear-gradient(to bottom, #82CAFA, white);
+        }
+        body {
+            font-family: "Arial", system-ui;
+            text-align: center;
+            margin-top: 50px;
+            background-color: #14171A;
+            color: white;
+        }
+        .main-icon{
+            width: 200px;
+            height: 200px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Add a new section for the user info -->
+        <div id="user-info">
+            <img id="profile-picture" alt="Profile Picture" style="width:50px; height:50px; border-radius:50%;">
+            <p> Hello, <b id="user-email"></b> </p>
+            
+        </div>
+
+        <h1>Цаг агаар</h1>
+        <img src="weather.png" alt="Weather Icon" class="main-icon">
+        <input type="text" id="cityInput" placeholder="Enter city name"> <br>
+        <button onclick="getWeatherByCity()" class="button1">Хотоо сонгох</button> 
+        <button onclick="getWeatherByLocation()" class="button2">Байршилаар харуулах</button>
+        <div id="weather"></div>
+    </div>
+
+    <script>
+        // Retrieve user info from localStorage and display it
+        const userEmail = localStorage.getItem('userEmail');
+        const userPicture = localStorage.getItem('userPicture');
+
+        if (userEmail && userPicture) {
+            document.getElementById('user-email').innerText = userEmail;
+            document.getElementById('profile-picture').src = userPicture;
+        } else {
+            // If no user info is found, redirect back to index page
+            window.location.href = "index.html";
+        }
+
+        // Weather API functions (existing code)
+        const apiKey = '351d1a3979d890297e2d92f30d8a3369';
+
+        async function getWeatherByCity() {
+            const city = document.getElementById('cityInput').value;
+            if (!city) {
+                alert("Please enter a city name!");
+                return;
+            }
+
+            const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('City not found');
+                const data = await response.json();
+                displayWeather(data);
+            } catch (error) {
+                document.getElementById('weather').innerHTML = `<p>Error: ${error.message}</p>`;
+            }
+        }
+
+        async function getWeatherByLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) throw new Error('Location not found');
+                        const data = await response.json();
+                        displayWeather(data);
+                    } catch (error) {
+                        document.getElementById('weather').innerHTML = `<p>Error: ${error.message}</p>`;
+                    }
+                }, () => {
+                    alert("Geolocation not supported or permission denied.");
+                });
+            } else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        }
+
+        function displayWeather(data) {
+            document.getElementById('weather').innerHTML = `
+                <p>City: ${data.name}</p>
+                <p>Temperature: ${data.main.temp}°C</p>
+                <p>Weather: ${data.weather[0].description}</p>
+                <img src="http://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" alt="Weather Icon">
+            `;
+        }
+    </script>
+</body>
+</html>
